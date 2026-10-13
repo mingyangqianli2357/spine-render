@@ -29,6 +29,7 @@ npm install
 ### 使用示例
 
 ```bash
+TMPDIR=/home/your_homg/tmp \
 python main.py \
 --data ./your_data.skel \
 --atlas ./your_data.atlas \
