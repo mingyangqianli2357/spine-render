@@ -1,7 +1,7 @@
 declare const PIXI: typeof import('pixi.js');
 declare const spine: typeof import('@esotericsoftware/spine-pixi-v8');
 
-interface Init_args {
+interface Init_Args {
   skel_data: string
   skel_atlas: string
   anim: string
@@ -12,15 +12,13 @@ interface Init_args {
   scale: number
 }
 
-interface Init_res {
+interface Init_Res {
   duration: number
   width: number
   height: number
 }
 
-var render_frames: (count: number, fps: number, start: number) => Promise<void>
-
-var init_spine = async (args: Init_args): Promise<Init_res> => {
+const init_spine = async (args: Init_Args): Promise<Init_Res> => {
   PIXI.Assets.add({ alias: "skel-data", src: args.skel_data })
   PIXI.Assets.add({ alias: "skel-atlas", src: args.skel_atlas })
   await PIXI.Assets.load(['skel-data', 'skel-atlas'])
@@ -29,7 +27,6 @@ var init_spine = async (args: Init_args): Promise<Init_res> => {
 
   sp.state.setAnimation(0, args.anim, false)
   sp.update(0)
-
   sp.scale.set(args.scale)
 
   const bounds = sp.getBounds()
@@ -47,7 +44,7 @@ var init_spine = async (args: Init_args): Promise<Init_res> => {
   sp.y = (args.height || Math.ceil(bounds.height)) / 2 - (bounds.y + bounds.height / 2) + args.offset_y
   app.stage.addChild(sp)
 
-  render_frames = async (count, fps, start) => {
+  const render_frames = async (count: number, fps: number, start: number) => {
     const dt = 1 / fps
     for (let i = 0; i < count; ++i) {
       app.renderer.render(app.stage)
@@ -76,8 +73,11 @@ var init_spine = async (args: Init_args): Promise<Init_res> => {
     }
   }
 
+  ;(window as any).init_spine = init_spine
+  ;(window as any).render_frames = render_frames
+
   return {
-    duration: sp.skeleton.data.findAnimation(args.anim)?.duration!,
+    duration: sp.skeleton.data.findAnimation(args.anim)!.duration,
     width: args.width || Math.ceil(bounds.width),
     height: args.height || Math.ceil(bounds.height)
   }
