@@ -1,6 +1,5 @@
 "use strict";
-var render_frames;
-var init_spine = async (args) => {
+const init_spine = async (args) => {
     PIXI.Assets.add({ alias: "skel-data", src: args.skel_data });
     PIXI.Assets.add({ alias: "skel-atlas", src: args.skel_atlas });
     await PIXI.Assets.load(['skel-data', 'skel-atlas']);
@@ -21,7 +20,7 @@ var init_spine = async (args) => {
     sp.x = (args.width || Math.ceil(bounds.width)) / 2 - (bounds.x + bounds.width / 2) + args.offset_x;
     sp.y = (args.height || Math.ceil(bounds.height)) / 2 - (bounds.y + bounds.height / 2) + args.offset_y;
     app.stage.addChild(sp);
-    render_frames = async (count, fps, start) => {
+    const render_frames = async (count, fps, start) => {
         const dt = 1 / fps;
         for (let i = 0; i < count; ++i) {
             app.renderer.render(app.stage);
@@ -43,8 +42,10 @@ var init_spine = async (args) => {
             sp.update(dt);
         }
     };
+    window.init_spine = init_spine;
+    window.render_frames = render_frames;
     return {
-        duration: sp.skeleton.data.findAnimation(args.anim)?.duration,
+        duration: sp.skeleton.data.findAnimation(args.anim).duration,
         width: args.width || Math.ceil(bounds.width),
         height: args.height || Math.ceil(bounds.height)
     };
