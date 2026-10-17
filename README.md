@@ -7,6 +7,7 @@
 - 离线渲染，不依赖实时播放
 - 支持透明背景输出 WebM（VP9 / yuva420p）
 - 支持单帧 PNG 输出
+- 使用多线程并行渲染，实测渲染 3840×2160 / 60fps 长约 1min 左右的 Spine 动画，本工具约需 6~7 分钟。
 
 ## 环境要求
 
@@ -40,5 +41,7 @@ python main.py \
 --size 3840x2160 \
 --offset 0,1200 \
 --scale 0.6 \
---port 8123
+--port 8123 \
+--cdp-port 9333 \
+--parallel 4
 ```
