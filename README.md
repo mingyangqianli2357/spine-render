@@ -39,5 +39,6 @@ python main.py \
 --output output.webm \
 --size 3840x2160 \
 --offset 0,1200 \
---scale 0.6
+--scale 0.6 \
+--port 8123
 ```
