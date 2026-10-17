@@ -1,3 +1,4 @@
+
 # Spine 离线渲染工具
 
 使用 Chromium + PixiJS 将 Spine 骨骼动画离线渲染为透明 WebM 或 PNG
@@ -12,6 +13,7 @@
 ## 环境要求
 
 类 Unix Only （如 GNU/Linux, macOS, etc.)
+
 不兼容 win ，路径的处理依赖类 Unix 环境，如果有需要欢迎尝试
 
 - Python 3.10+
