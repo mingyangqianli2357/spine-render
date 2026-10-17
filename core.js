@@ -23,27 +23,21 @@ const init_spine = async (args) => {
     sp.x = width / 2 - (bounds.x + bounds.width / 2) + args.offset_x;
     sp.y = height / 2 - (bounds.y + bounds.height / 2) + args.offset_y;
     app.stage.addChild(sp);
-    const render_frames = async (count, fps, start) => {
+    const render_frames = async (start, last, fps, step) => {
         const dt = 1 / fps;
         const frame = new PIXI.Rectangle(0, 0, width, height);
-        for (let i = 0; i < count; ++i) {
+        sp.update(dt * start);
+        for (let i = 0, frame_pos = start; i < last; ++i, frame_pos += step) {
             app.renderer.render(app.stage);
-            const canvas = app.renderer.extract.canvas({ target: app.stage, frame });
-            const blob = await new Promise((resolve, reject) => canvas.toBlob(b => {
-                if (b)
-                    resolve(b);
-                else
-                    reject('toBlob failed');
-            }));
-            const filename = 'frame_' + String(start + i).padStart(5, '0') + '.png';
+            const { pixels } = app.renderer.extract.pixels({ target: app.stage, frame });
+            const blob = new Blob([new Uint8Array(pixels).buffer], { type: 'application/octet-stream' });
+            const filename = 'frame_' + String(frame_pos).padStart(5, '0') + '.bytes';
             await fetch('/save_frame', {
                 method: 'POST',
                 headers: { 'X-Frame-Name': filename },
                 body: blob
             });
-            canvas.width = 0;
-            canvas.height = 0;
-            sp.update(dt);
+            sp.update(dt * step);
         }
     };
     window.init_spine = init_spine;
