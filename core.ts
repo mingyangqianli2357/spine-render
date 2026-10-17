@@ -47,33 +47,26 @@ const init_spine = async (args: Init_Args): Promise<Init_Res> => {
   sp.y = height / 2 - (bounds.y + bounds.height / 2) + args.offset_y
   app.stage.addChild(sp)
 
-  const render_frames = async (count: number, fps: number, start: number) => {
+  const render_frames = async (start: number, last: number, fps: number, step: number) => {
     const dt = 1 / fps
     const frame = new PIXI.Rectangle(0, 0, width, height)
-    for (let i = 0; i < count; ++i) {
+
+    sp.update(dt * start)
+
+    for (let i = 0, frame_pos = start; i < last; ++i, frame_pos += step) {
       app.renderer.render(app.stage)
 
-      const canvas = app.renderer.extract.canvas({ target: app.stage, frame }) as HTMLCanvasElement
+      const { pixels } = app.renderer.extract.pixels({ target: app.stage, frame })
+      const blob = new Blob([new Uint8Array(pixels).buffer], { type: 'application/octet-stream' })
+      const filename = 'frame_' + String(frame_pos).padStart(5, '0') + '.bytes'
 
-      const blob = await new Promise<Blob>((resolve, reject) =>
-        canvas.toBlob(b => {
-          if (b)
-            resolve(b)
-          else
-            reject('toBlob failed')
-        })
-      )
-
-      const filename = 'frame_' + String(start + i).padStart(5, '0') + '.png'
       await fetch('/save_frame', {
         method: 'POST',
         headers: { 'X-Frame-Name': filename },
         body: blob
       })
 
-      canvas.width = 0
-      canvas.height = 0
-      sp.update(dt)
+      sp.update(dt * step)
     }
   }
 
