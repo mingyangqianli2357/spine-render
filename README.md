@@ -11,7 +11,10 @@
 
 ## 环境要求
 
-- Python 3.14（实测）
+类 Unix Only （如 GNU/Linux, macOS, etc.)
+不兼容 win ，路径的处理依赖类 Unix 环境，如果有需要欢迎尝试
+
+- Python 3.10+
 - Node.js 18+
 - FFmpeg
 
