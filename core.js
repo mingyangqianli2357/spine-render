@@ -6,25 +6,29 @@ const init_spine = async (args) => {
     const sp = spine.Spine.from({ skeleton: 'skel-data', atlas: 'skel-atlas' });
     sp.state.setAnimation(0, args.anim, false);
     sp.update(0);
-    sp.scale.set(args.scale);
-    const bounds = sp.getBounds();
+    const basebounds = sp.getBounds();
+    const width = args.width || Math.ceil(basebounds.width);
+    const height = args.height || Math.ceil(basebounds.height);
     const app = new PIXI.Application();
     await app.init({
-        width: args.width || Math.ceil(bounds.width),
-        height: args.height || Math.ceil(bounds.height),
+        width: width,
+        height: height,
         backgroundAlpha: 0,
         preference: 'webgl'
     });
     app.ticker.stop();
     sp.autoUpdate = false;
-    sp.x = (args.width || Math.ceil(bounds.width)) / 2 - (bounds.x + bounds.width / 2) + args.offset_x;
-    sp.y = (args.height || Math.ceil(bounds.height)) / 2 - (bounds.y + bounds.height / 2) + args.offset_y;
+    sp.scale.set(args.scale);
+    const bounds = sp.getBounds();
+    sp.x = width / 2 - (bounds.x + bounds.width / 2) + args.offset_x;
+    sp.y = height / 2 - (bounds.y + bounds.height / 2) + args.offset_y;
     app.stage.addChild(sp);
     const render_frames = async (count, fps, start) => {
         const dt = 1 / fps;
+        const frame = new PIXI.Rectangle(0, 0, width, height);
         for (let i = 0; i < count; ++i) {
             app.renderer.render(app.stage);
-            const canvas = app.renderer.extract.canvas(app.stage);
+            const canvas = app.renderer.extract.canvas({ target: app.stage, frame });
             const blob = await new Promise((resolve, reject) => canvas.toBlob(b => {
                 if (b)
                     resolve(b);
@@ -46,7 +50,7 @@ const init_spine = async (args) => {
     window.render_frames = render_frames;
     return {
         duration: sp.skeleton.data.findAnimation(args.anim).duration,
-        width: args.width || Math.ceil(bounds.width),
-        height: args.height || Math.ceil(bounds.height)
+        width: width,
+        height: height
     };
 };
