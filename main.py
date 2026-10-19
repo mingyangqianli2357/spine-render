@@ -122,7 +122,7 @@ def main():
         w, h = map(int, args.size.split("x"))
     x, y = map(float, args.offset.split(","))
 
-    httpd = http.server.HTTPServer(("127.0.0.1", args.port), PostHandler)
+    httpd = http.server.ThreadingHTTPServer(("127.0.0.1", args.port), PostHandler)
     threading.Thread(target=httpd.serve_forever, daemon=True).start()
 
     with sync_playwright() as p:
