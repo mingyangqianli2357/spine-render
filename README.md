@@ -30,6 +30,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 playwright install chromium
 npm install
+npx tsc core.ts --target ES2020 --module none --outDir . --ignoreConfig --ignoreDeprecations 6.0 --moduleResolution node
 ```
 ### 使用示例
 
