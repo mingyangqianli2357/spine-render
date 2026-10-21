@@ -25,7 +25,7 @@
 ```bash
 git clone https://github.com/mingyangqianli2357/spine-render.git
 cd spine-render
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 playwright install chromium
@@ -38,7 +38,7 @@ npx tsc core.ts --target ES2020 --module none --outDir . --ignoreConfig --ignore
 cd spine-render
 source .venv/bin/activate
 TMPDIR=tmp \
-python main.py \
+python3 main.py \
 --data your_data.skel \
 --atlas your_data.atlas \
 --anim idle \
